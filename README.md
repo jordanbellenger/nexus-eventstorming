@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Nexus
 
-## Getting Started
+Nexus est un PoC concu pour capter le besoin client pendant un atelier et generer directement un board MVP exploitable.
 
-First, run the development server:
+Pendant l'atelier, Nexus ecoute la conversation. Au fur et a mesure que le client decrit son metier, par exemple :
+
+> "Quand une commande est payee, on alerte la logistique, et si le stock est vide, on rembourse le client"
+
+l'IA modelise la logique en temps reel sur un grand ecran.
+
+Les participants voient leur processus mental se dessiner sous leurs yeux sous forme de flux Event Storming. Si une etape manque, le trou dans le diagramme devient visible immediatement. A la fin de la reunion, un bouton permet de generer un backlog structure avec Epics et User Stories directement exploitable dans JIRA.
+
+## Demarrage
+
+Lancer le serveur de developpement :
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir [http://localhost:3000](http://localhost:3000) dans le navigateur.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Configuration
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Creer ou completer `C:\Sources\nexus-app\.env.local` :
 
-## Learn More
+```env
+ANTHROPIC_API_KEY=sk-ant-...
+```
 
-To learn more about Next.js, take a look at the following resources:
+Redemarrer ensuite le serveur Next.js.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Parcours du PoC
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Demarrer l'ecoute live depuis le panneau de gauche.
+2. Laisser Nexus retranscrire la conversation dans la zone de texte.
+3. Attendre une pause dans l'atelier : l'analyse se relance automatiquement pour mettre a jour le board.
+4. Reorganiser les noeuds si besoin directement sur le whiteboard.
+5. Cliquer sur `Generer les tickets JIRA` pour produire un backlog Markdown avec Epics, User Stories et criteres BDD.
 
-## Deploy on Vercel
+## Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Next.js App Router
+- TypeScript
+- Tailwind CSS
+- React Flow (`@xyflow/react`)
+- Anthropic SDK
+- Framer Motion
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Limites actuelles
+
+- La transcription live repose sur la Web Speech API du navigateur.
+- Le rendu courant cible un board Event Storming.
+- La generation JIRA produit du Markdown structure, pas une creation directe de tickets via l'API Jira.
+
+## Suite possible
+
+- Export Jira via API native
+- Support BPMN en plus d'Event Storming
+- Historique de versions du board
+- Multi-participants et annotation collaborative
