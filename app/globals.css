@@ -4,13 +4,61 @@
 :root {
   --background: #f5f7fb;
   --foreground: #142033;
+  --muted: #5b6677;
+  --muted-strong: #304053;
   --panel: rgba(255, 255, 255, 0.82);
   --panel-strong: rgba(255, 255, 255, 0.94);
+  --surface: rgba(255, 255, 255, 0.92);
+  --surface-strong: #ffffff;
   --line: rgba(20, 32, 51, 0.08);
   --line-strong: rgba(20, 32, 51, 0.12);
   --accent: #ff6b2c;
   --accent-soft: rgba(255, 107, 44, 0.16);
   --board-dot: rgba(20, 32, 51, 0.14);
+  --overlay: rgba(255, 255, 255, 0.78);
+  --shadow: rgba(20, 32, 51, 0.08);
+  --placeholder: rgba(20, 32, 51, 0.42);
+  --success: #1d8f5a;
+  --danger: #8a3d12;
+  --danger-soft: #fff4ee;
+  --danger-line: #ffd7c2;
+  --whiteboard-base: #fcfdff;
+  --whiteboard-fade-start: rgba(255, 255, 255, 0.78);
+  --whiteboard-fade-mid: rgba(255, 255, 255, 0.24);
+  --whiteboard-fade-end: rgba(255, 255, 255, 0.08);
+  --root-glow: rgba(255, 255, 255, 0.95);
+  --root-gradient-start: #f8fafc;
+  --root-gradient-end: #eef2f7;
+}
+
+html[data-theme="dark"] {
+  --background: #0e1624;
+  --foreground: #ecf2ff;
+  --muted: #a4b2c6;
+  --muted-strong: #d2dbea;
+  --panel: rgba(13, 22, 36, 0.82);
+  --panel-strong: rgba(17, 28, 44, 0.94);
+  --surface: rgba(20, 31, 49, 0.9);
+  --surface-strong: #172335;
+  --line: rgba(210, 219, 234, 0.12);
+  --line-strong: rgba(210, 219, 234, 0.18);
+  --accent: #ff8b52;
+  --accent-soft: rgba(255, 139, 82, 0.18);
+  --board-dot: rgba(210, 219, 234, 0.16);
+  --overlay: rgba(8, 13, 22, 0.72);
+  --shadow: rgba(0, 0, 0, 0.34);
+  --placeholder: rgba(236, 242, 255, 0.4);
+  --success: #5ed39f;
+  --danger: #ffbc97;
+  --danger-soft: rgba(96, 41, 15, 0.28);
+  --danger-line: rgba(255, 188, 151, 0.22);
+  --whiteboard-base: #101a2a;
+  --whiteboard-fade-start: rgba(16, 26, 42, 0.76);
+  --whiteboard-fade-mid: rgba(16, 26, 42, 0.26);
+  --whiteboard-fade-end: rgba(16, 26, 42, 0.08);
+  --root-glow: rgba(30, 43, 64, 0.5);
+  --root-gradient-start: #10192a;
+  --root-gradient-end: #09101b;
 }
 
 @theme inline {
@@ -32,8 +80,8 @@
 
 html {
   background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.95), transparent 32%),
-    linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+    radial-gradient(circle at top left, var(--root-glow), transparent 32%),
+    linear-gradient(180deg, var(--root-gradient-start) 0%, var(--root-gradient-end) 100%);
 }
 
 body {
@@ -43,11 +91,11 @@ body {
 }
 
 textarea::placeholder {
-  color: rgba(20, 32, 51, 0.42);
+  color: var(--placeholder);
 }
 
 .whiteboard-dot-grid {
-  background-color: #fcfdff;
+  background-color: var(--whiteboard-base);
   background-image: radial-gradient(var(--board-dot) 1px, transparent 1px);
   background-size: 18px 18px;
   background-position: -9px -9px;
@@ -55,5 +103,31 @@ textarea::placeholder {
 
 .whiteboard-fade {
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.24) 30%, rgba(255, 255, 255, 0.08) 100%);
+    linear-gradient(
+      180deg,
+      var(--whiteboard-fade-start) 0%,
+      var(--whiteboard-fade-mid) 30%,
+      var(--whiteboard-fade-end) 100%
+    );
+}
+
+.react-flow__controls {
+  background: var(--surface) !important;
+  border-color: var(--line) !important;
+  box-shadow: 0 14px 30px var(--shadow) !important;
+}
+
+.react-flow__controls-button {
+  background: transparent !important;
+  border-bottom-color: var(--line) !important;
+  color: var(--foreground) !important;
+}
+
+.react-flow__controls-button svg {
+  fill: currentColor !important;
+}
+
+.react-flow__minimap {
+  background: var(--surface) !important;
+  border-color: var(--line) !important;
 }

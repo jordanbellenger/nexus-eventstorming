@@ -18,6 +18,27 @@ export const metadata: Metadata = {
   description: "Atelier d'Event Storming assiste par IA pour Devoteam.",
 };
 
+const themeScript = `
+  (() => {
+    const storageKey = "nexus-theme";
+    const defaultTheme = "light";
+
+    try {
+      const storedTheme = window.localStorage.getItem(storageKey);
+      const theme =
+        storedTheme === "dark" || storedTheme === "light"
+          ? storedTheme
+          : defaultTheme;
+
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.style.colorScheme = theme;
+    } catch {
+      document.documentElement.dataset.theme = defaultTheme;
+      document.documentElement.style.colorScheme = defaultTheme;
+    }
+  })();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,9 +47,14 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
+      data-theme="light"
+      suppressHydrationWarning
       className={`${manrope.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );
 }
