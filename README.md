@@ -1,7 +1,7 @@
 # Nexus
 
-<img align="right" src="img/screenshot1.png">
-<img align="right" src="img/screenshot2.png">
+<img src="img/screenshot1.png">
+<img src="img/screenshot2.png">
 
 [FR](#francais) | [EN](#english)
 
