@@ -1,10 +1,7 @@
-import Anthropic from "@anthropic-ai/sdk";
 import type { Edge, Node } from "@xyflow/react";
+import { generateText } from "ai";
 import { NextResponse } from "next/server";
-
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+import { resolveLanguageModel } from "@/lib/ai-models";
 
 const SYSTEM_PROMPT =
   "Tu es un Product Owner expert en Domain-Driven Design et en Event Storming. A partir d'un graphe de processus metier, tu rediges un backlog de User Stories actionnable pour Jira.";
@@ -13,14 +10,6 @@ type ExportRequest = {
   nodes?: unknown;
   edges?: unknown;
 };
-
-function extractTextContent(response: Anthropic.Messages.Message): string {
-  return response.content
-    .filter((block) => block.type === "text")
-    .map((block) => block.text)
-    .join("\n")
-    .trim();
-}
 
 function validateGraphPayload(body: ExportRequest): { nodes: Node[]; edges: Edge[] } {
   if (!Array.isArray(body.nodes) || !Array.isArray(body.edges)) {
@@ -34,16 +23,11 @@ function validateGraphPayload(body: ExportRequest): { nodes: Node[]; edges: Edge
 }
 
 export async function POST(request: Request) {
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return NextResponse.json(
-      { error: "ANTHROPIC_API_KEY is not configured." },
-      { status: 500 },
-    );
-  }
-
   try {
-    const body = (await request.json()) as ExportRequest;
+    const body = (await request.json()) as ExportRequest & { modelId?: unknown };
     const { nodes, edges } = validateGraphPayload(body);
+    const selectedModelId =
+      typeof body?.modelId === "string" ? body.modelId : undefined;
 
     if (nodes.length === 0) {
       return NextResponse.json(
@@ -51,6 +35,8 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
+
+    const { model, selectedOptionId } = resolveLanguageModel(selectedModelId);
 
     const prompt = [
       "Analyse ce graphe Event Storming et genere un backlog Jira en Markdown.",
@@ -69,26 +55,25 @@ export async function POST(request: Request) {
       JSON.stringify({ nodes, edges }, null, 2),
     ].join("\n");
 
-    const response = await anthropic.messages.create({
-      model: "claude-3-5-sonnet-latest",
+    const { text } = await generateText({
+      model,
       system: SYSTEM_PROMPT,
-      max_tokens: 4096,
+      prompt,
       temperature: 0.2,
-      messages: [
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
     });
 
-    const markdown = extractTextContent(response);
+    const markdown = text.trim();
 
     if (!markdown) {
       throw new Error("Empty model response.");
     }
 
-    return NextResponse.json({ markdown });
+    return NextResponse.json({
+      markdown,
+      meta: {
+        modelId: selectedOptionId,
+      },
+    });
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Unknown server error.";

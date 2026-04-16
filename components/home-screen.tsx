@@ -12,24 +12,34 @@ import {
 } from "@xyflow/react";
 import { EventStormingBoard } from "@/components/event-storming-board";
 import { JiraExportPanel } from "@/components/jira-export-panel";
+import {
+  DEFAULT_MODEL_OPTION_ID,
+  MODEL_OPTIONS,
+} from "@/lib/ai-model-catalog";
 
-const transcriptionPlaceholder = `Client: Nous voulons capturer les evenements metier au fil de l'atelier.
+const transcriptionPlaceholder = `Lorsqu'une commande est payee, le systeme confirme immediatement le paiement et envoie l'information a la logistique pour preparer l'expedition. Si le stock est disponible, une reservation est creee et la commande passe au statut prete a expedier. Si le stock est insuffisant, le service client doit etre alerte pour prevenir le client et proposer soit un remboursement, soit une mise en attente.
 
-Facilitateur: Notez les irritants, les decisions critiques et les acteurs concernes.
+Quand la commande est preparee, l'etiquette de transport est generee et le client recoit une notification d'expedition. Si le transporteur refuse le colis ou si la preparation echoue, la commande repasse en anomalie et une revue manuelle est lancee.
 
-IA Nexus: Je vais proposer une premiere modelisation Event Storming a partir de cette transcription.`;
+En cas d'annulation avant expedition, le paiement doit etre rembourse automatiquement et la reservation de stock doit etre liberee. Si l'annulation intervient apres expedition, alors une procedure de retour doit etre ouverte et suivie jusqu'a reception du colis.`;
 
 const AUTO_ANALYZE_DELAY_MS = 10000;
 
 type AnalyzeResponse = {
   nodes: Node[];
   edges: Edge[];
+  meta?: {
+    modelId?: string;
+  };
 };
 
 type ExportResponse = {
   markdown: string;
   error?: string;
   details?: string;
+  meta?: {
+    modelId?: string;
+  };
 };
 
 export function HomeScreen() {
@@ -43,6 +53,7 @@ export function HomeScreen() {
   const [jiraMarkdown, setJiraMarkdown] = useState("");
   const [isExportPanelOpen, setIsExportPanelOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const [selectedModelId, setSelectedModelId] = useState(DEFAULT_MODEL_OPTION_ID);
   const [isListening, setIsListening] = useState(false);
   const [isSpeechSupported, setIsSpeechSupported] = useState(false);
   const [recognitionError, setRecognitionError] = useState<string | null>(null);
@@ -208,7 +219,10 @@ export function HomeScreen() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ transcript: normalizedTranscript }),
+        body: JSON.stringify({
+          transcript: normalizedTranscript,
+          modelId: selectedModelId,
+        }),
       });
 
       const payload = (await response.json()) as AnalyzeResponse & {
@@ -222,6 +236,9 @@ export function HomeScreen() {
 
       setNodes(payload.nodes ?? []);
       setEdges(payload.edges ?? []);
+      if (payload.meta?.modelId) {
+        setSelectedModelId(payload.meta.modelId);
+      }
       lastAnalyzedTranscriptRef.current = normalizedTranscript;
     } catch (error) {
       setErrorMessage(
@@ -249,7 +266,7 @@ export function HomeScreen() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ nodes, edges }),
+        body: JSON.stringify({ nodes, edges, modelId: selectedModelId }),
       });
 
       const payload = (await response.json()) as ExportResponse;
@@ -259,6 +276,9 @@ export function HomeScreen() {
       }
 
       setJiraMarkdown(payload.markdown ?? "");
+      if (payload.meta?.modelId) {
+        setSelectedModelId(payload.meta.modelId);
+      }
     } catch (error) {
       setExportErrorMessage(
         error instanceof Error ? error.message : "Une erreur inconnue est survenue.",
@@ -311,6 +331,23 @@ export function HomeScreen() {
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-soft text-accent">
                 <AudioLines className="h-6 w-6" />
               </div>
+            </div>
+
+            <label className="mb-3 text-sm font-medium text-[#304053]">
+              Modele IA
+            </label>
+            <div className="mb-4">
+              <select
+                value={selectedModelId}
+                onChange={(event) => setSelectedModelId(event.target.value)}
+                className="w-full rounded-[18px] border border-line-strong bg-panel-strong px-4 py-3 text-sm text-[#162234] outline-none transition focus:border-accent focus:ring-4 focus:ring-accent-soft"
+              >
+                {MODEL_OPTIONS.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <label className="mb-3 text-sm font-medium text-[#304053]">
