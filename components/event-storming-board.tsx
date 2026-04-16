@@ -44,7 +44,7 @@ function EventStormingBoardCanvas({
         className="absolute top-4 right-4 z-20 inline-flex items-center gap-2 rounded-full border border-line bg-white/96 px-4 py-2 text-sm font-semibold text-[#102033] shadow-[0_10px_30px_rgba(20,32,51,0.10)] transition hover:bg-[#f6f8fb] disabled:cursor-not-allowed disabled:opacity-50"
       >
         <Sparkles className="h-4 w-4 text-accent" />
-        {isExporting ? "Generation..." : "Generer les tickets JIRA"}
+        {isExporting ? "Building..." : "Export backlog draft"}
       </button>
 
       <ReactFlow

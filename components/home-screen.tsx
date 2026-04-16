@@ -2,7 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { AlertCircle, AudioLines, Mic, MicOff } from "lucide-react";
+import {
+  AlertCircle,
+  AudioLines,
+  FileText,
+  Mic,
+  MicOff,
+  RotateCcw,
+} from "lucide-react";
 import { clsx } from "clsx";
 import {
   type Edge,
@@ -43,7 +50,7 @@ type ExportResponse = {
 };
 
 export function HomeScreen() {
-  const [transcript, setTranscript] = useState(transcriptionPlaceholder);
+  const [transcript, setTranscript] = useState("");
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -62,7 +69,7 @@ export function HomeScreen() {
   const transcriptRef = useRef(transcript);
   const lastAnalyzedTranscriptRef = useRef("");
   const shouldResumeListeningRef = useRef(false);
-  const liveTranscriptBaseRef = useRef(transcriptionPlaceholder);
+  const liveTranscriptBaseRef = useRef("");
 
   useEffect(() => {
     transcriptRef.current = transcript;
@@ -202,6 +209,41 @@ export function HomeScreen() {
     recognition.start();
   }
 
+  function handleLoadExample() {
+    setTranscript(transcriptionPlaceholder);
+    transcriptRef.current = transcriptionPlaceholder;
+    liveTranscriptBaseRef.current = transcriptionPlaceholder;
+    lastAnalyzedTranscriptRef.current = "";
+    setErrorMessage(null);
+    setExportErrorMessage(null);
+    setRecognitionError(null);
+  }
+
+  function handleResetSession() {
+    shouldResumeListeningRef.current = false;
+
+    if (silenceTimeoutRef.current) {
+      window.clearTimeout(silenceTimeoutRef.current);
+      silenceTimeoutRef.current = null;
+    }
+
+    recognitionRef.current?.stop();
+
+    setTranscript("");
+    transcriptRef.current = "";
+    liveTranscriptBaseRef.current = "";
+    lastAnalyzedTranscriptRef.current = "";
+    setNodes([]);
+    setEdges([]);
+    setJiraMarkdown("");
+    setIsExportPanelOpen(false);
+    setIsCopied(false);
+    setErrorMessage(null);
+    setExportErrorMessage(null);
+    setRecognitionError(null);
+    setIsListening(false);
+  }
+
   async function handleAnalyze(inputTranscript = transcriptRef.current) {
     const normalizedTranscript = inputTranscript.trim();
 
@@ -251,7 +293,7 @@ export function HomeScreen() {
 
   async function handleExport() {
     if (nodes.length === 0) {
-      setExportErrorMessage("Generez d'abord un board avant de demander les tickets JIRA.");
+      setExportErrorMessage("Generate a board first before exporting the backlog draft.");
       return;
     }
 
@@ -350,9 +392,31 @@ export function HomeScreen() {
               </select>
             </div>
 
-            <label className="mb-3 text-sm font-medium text-[#304053]">
-              Flux de transcription
-            </label>
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+              <label className="text-sm font-medium text-[#304053]">
+                Flux de transcription
+              </label>
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleLoadExample}
+                  disabled={isAnalyzing || isExporting}
+                  className="inline-flex items-center justify-center gap-2 rounded-[18px] border border-line bg-white/80 px-4 py-2 text-sm font-medium text-[#102033] transition hover:bg-[#f6f8fb] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <FileText className="h-4 w-4 text-accent" />
+                  Charger un exemple
+                </button>
+                <button
+                  type="button"
+                  onClick={handleResetSession}
+                  disabled={isAnalyzing || isExporting}
+                  className="inline-flex items-center justify-center gap-2 rounded-[18px] border border-line bg-white/80 px-4 py-2 text-sm font-medium text-[#102033] transition hover:bg-[#f6f8fb] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <RotateCcw className="h-4 w-4 text-[#5d6a7d]" />
+                  Nouvelle session
+                </button>
+              </div>
+            </div>
             <textarea
               className={clsx(
                 "min-h-[320px] flex-1 resize-none rounded-[24px] border border-line-strong bg-panel-strong px-5 py-4 text-sm leading-7 text-[#162234] shadow-inner outline-none transition",
@@ -360,6 +424,7 @@ export function HomeScreen() {
               )}
               value={transcript}
               onChange={(event) => setTranscript(event.target.value)}
+              placeholder="La transcription apparaitra ici pendant l'atelier. Vous pouvez aussi charger un exemple pour tester le board."
             />
 
             <div className="mt-5 flex flex-wrap items-center gap-3">

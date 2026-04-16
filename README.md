@@ -12,7 +12,7 @@ Pendant l'atelier, Nexus ecoute la conversation. Au fur et a mesure que le clien
 
 l'IA modelise la logique en temps reel sur un grand ecran.
 
-Les participants voient leur processus mental se dessiner sous leurs yeux sous forme de flux Event Storming. Si une etape manque, le trou dans le diagramme devient visible immediatement. A la fin de la reunion, un bouton permet de generer un backlog structure avec Epics et User Stories directement exploitable dans JIRA.
+Les participants voient leur processus mental se dessiner sous leurs yeux sous forme de flux Event Storming. Si une etape manque, le trou dans le diagramme devient visible immediatement. A la fin de la reunion, un bouton permet d'exporter un backlog de cadrage en Markdown, structure en Epics et User Stories, reutilisable dans Jira, Azure DevOps ou tout autre outil.
 
 ### Demarrage
 
@@ -55,7 +55,7 @@ Redemarrer ensuite le serveur Next.js.
 3. Laisser Nexus retranscrire la conversation dans la zone de texte.
 4. Attendre une pause dans l'atelier : l'analyse se relance automatiquement pour mettre a jour le board.
 5. Reorganiser les noeuds si besoin directement sur le whiteboard.
-6. Cliquer sur `Generer les tickets JIRA` pour produire un backlog Markdown avec Epics, User Stories et criteres BDD.
+6. Cliquer sur `Export backlog draft` pour produire un backlog Markdown avec Epics, User Stories et criteres BDD.
 
 ### Stack
 
@@ -71,7 +71,7 @@ Redemarrer ensuite le serveur Next.js.
 - La transcription live repose sur la Web Speech API du navigateur.
 - Le rendu courant cible un board Event Storming.
 - Le choix du modele depend des cles configurees dans `.env.local`.
-- La generation JIRA produit du Markdown structure, pas une creation directe de tickets via l'API Jira.
+- L'export produit un backlog Markdown structure, pas une creation directe d'items via une API tierce.
 
 ### Suite possible
 
@@ -90,7 +90,7 @@ During the workshop, Nexus listens to the conversation. As the client describes 
 
 the AI models the logic in real time on a shared screen.
 
-Participants can see their mental process taking shape automatically as an Event Storming flow. If a step is missing, the gap in the diagram becomes obvious immediately. At the end of the meeting, a button generates a structured backlog with Epics and User Stories ready to be reused in JIRA.
+Participants can see their mental process taking shape automatically as an Event Storming flow. If a step is missing, the gap in the diagram becomes obvious immediately. At the end of the meeting, a button exports a Markdown discovery backlog, structured into Epics and User Stories, that can be reused in Jira, Azure DevOps, or any similar tool.
 
 ### Getting started
 
@@ -133,7 +133,7 @@ Then restart the Next.js server.
 3. Let Nexus transcribe the conversation into the text area.
 4. Wait for a pause in the workshop: the analysis runs again automatically to refresh the board.
 5. Reorganize nodes directly on the whiteboard if needed.
-6. Click `Generer les tickets JIRA` to produce a Markdown backlog with Epics, User Stories, and BDD acceptance criteria.
+6. Click `Export backlog draft` to produce a Markdown backlog with Epics, User Stories, and BDD acceptance criteria.
 
 ### Stack
 
@@ -149,7 +149,7 @@ Then restart the Next.js server.
 - Live transcription relies on the browser Web Speech API.
 - The current rendering targets an Event Storming board.
 - Model selection depends on the provider keys configured in `.env.local`.
-- The JIRA generation currently outputs structured Markdown, not direct ticket creation through the Jira API.
+- The backlog export currently outputs structured Markdown, not direct ticket creation through a third-party API.
 
 ### Next steps
 

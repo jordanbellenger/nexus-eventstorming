@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { resolveLanguageModel } from "@/lib/ai-models";
 
 const SYSTEM_PROMPT =
-  "Tu es un Product Owner expert en Domain-Driven Design et en Event Storming. A partir d'un graphe de processus metier, tu rediges un backlog de User Stories actionnable pour Jira.";
+  "Tu es un Product Owner expert en Domain-Driven Design et en Event Storming. A partir d'un graphe de processus metier, tu rediges un backlog de cadrage exploitable par une equipe produit.";
 
 type ExportRequest = {
   nodes?: unknown;
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
     if (nodes.length === 0) {
       return NextResponse.json(
-        { error: "At least one node is required to generate Jira tickets." },
+        { error: "At least one node is required to export a backlog draft." },
         { status: 400 },
       );
     }
@@ -39,12 +39,12 @@ export async function POST(request: Request) {
     const { model, selectedOptionId } = resolveLanguageModel(selectedModelId);
 
     const prompt = [
-      "Analyse ce graphe Event Storming et genere un backlog Jira en Markdown.",
+      "Analyse ce graphe Event Storming et genere un backlog de cadrage en Markdown.",
       "",
       "Consignes obligatoires :",
       "- Agis comme un Product Owner.",
       "- Regroupe les User Stories par Epic.",
-      "- Utilise un Markdown lisible et directement exploitable dans Jira ou Confluence.",
+      "- Utilise un Markdown lisible et reutilisable dans Jira, Azure DevOps, Confluence ou un outil equivalent.",
       "- Pour chaque Epic, ajoute un titre et une courte intention produit.",
       "- Pour chaque User Story, utilise le format : `- US-XX En tant que ... je veux ... afin de ...`.",
       "- Ajoute sous chaque User Story une section `Criteres d'acceptation` avec 2 a 4 criteres au format Gherkin/BDD (`Etant donne`, `Quand`, `Alors`).",
@@ -80,7 +80,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       {
-        error: "Failed to export Jira tickets.",
+        error: "Failed to export backlog draft.",
         details: message,
       },
       { status: 500 },

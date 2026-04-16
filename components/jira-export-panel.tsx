@@ -42,14 +42,14 @@ export function JiraExportPanel({
             <div className="flex items-start justify-between border-b border-line px-6 py-5">
               <div>
                 <p className="font-mono text-xs uppercase tracking-[0.28em] text-[#778295]">
-                  Export Jira
+                  Backlog Export
                 </p>
                 <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-[#102033]">
-                  User Stories generees
+                  Backlog draft
                 </h2>
                 <p className="mt-2 max-w-lg text-sm leading-6 text-[#5b6677]">
-                  Backlog structure par Epic avec criteres d&apos;acceptation au
-                  format BDD.
+                  Structured backlog draft grouped by Epic, with BDD-style
+                  acceptance criteria.
                 </p>
               </div>
               <button
@@ -65,7 +65,7 @@ export function JiraExportPanel({
             <div className="flex items-center justify-between border-b border-line px-6 py-4">
               <div className="inline-flex items-center gap-2 rounded-full bg-[#eef4fb] px-3 py-1 font-mono text-xs text-[#4d5c70]">
                 <FileText className="h-3.5 w-3.5" />
-                Markdown export
+                Markdown draft
               </div>
               <button
                 type="button"
@@ -84,7 +84,7 @@ export function JiraExportPanel({
                   <div className="text-center">
                     <div className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-[#d8e3f0] border-t-accent" />
                     <p className="mt-4 text-sm font-medium text-[#102033]">
-                      Generation des tickets JIRA en cours...
+                      Building the backlog draft...
                     </p>
                   </div>
                 </div>
